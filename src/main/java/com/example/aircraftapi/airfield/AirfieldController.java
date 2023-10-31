@@ -1,5 +1,6 @@
 package com.example.aircraftapi.airfield;
 
+import com.example.aircraftapi.navigator.Navigator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,13 @@ public class AirfieldController {
         this.airfieldRepository = airfieldRepository;
     }
     @GetMapping("/airfield/{id}")
-    public ResponseEntity<?> details(@PathVariable Long id){
+    public ResponseEntity<Airfield> details(@PathVariable Long id){
         Optional<Airfield> optionalAirfield = airfieldRepository.findById(id);
         if(optionalAirfield.isPresent()){
             Airfield airfield = optionalAirfield.get();
             return ResponseEntity.ok(airfield);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("airfield not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
     @PostMapping("/airfield/add")
@@ -33,5 +34,11 @@ public class AirfieldController {
     public ResponseEntity<List<Airfield>> add(@RequestBody List<Airfield> airfields){
         List<Airfield> addedAirfields = airfieldRepository.saveAll(airfields);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedAirfields);
+    }
+    @GetMapping("/airfield/getdist/{id1}/{id2}")
+    public Double getDistance(@PathVariable Long id1, @PathVariable Long id2){
+        Airfield start = details(id1).getBody();
+        Airfield finish = details(id2).getBody();
+        return Navigator.calculateDistance(start, finish);
     }
 }

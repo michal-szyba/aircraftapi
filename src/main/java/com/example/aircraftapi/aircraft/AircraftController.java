@@ -30,8 +30,6 @@ public class AircraftController {
     public ResponseEntity<Aircraft> add(@RequestBody Aircraft aircraft){
         Aircraft addedAircraft = aircraftRepository.save(aircraft);
         return ResponseEntity.status(HttpStatus.CREATED).body(addedAircraft);
-
-
     }
     @PostMapping("/aircraft/addlist")
     public ResponseEntity<List<Aircraft>> add(@RequestBody List<Aircraft> aircraftList){
