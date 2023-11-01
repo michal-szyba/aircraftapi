@@ -19,6 +19,8 @@ public class Armament {
     @Enumerated(EnumType.STRING)
     private GuidanceEnum guidanceType;
     private Double weight;
+    @Transient
+    private Long quantity;
 
 
 }

@@ -23,9 +23,9 @@ public class Aircraft {
     private String type;
     @OneToMany
     private List<Armament> armament;
-    private int crew;
-    private float length;
-    private Long wingspan;
+    private int maxCrew;
+    private Float length;
+    private Float wingspan;
     private Long emptyWeight;
     private Long maxTakeoffWeight;
     private Float twRatio;
@@ -34,6 +34,7 @@ public class Aircraft {
     private String radar;
     private String rwr;
     private String additionalEquipment;
+    private Long maxRange; //"range" is a reserved SQL keyword
 
 
 }

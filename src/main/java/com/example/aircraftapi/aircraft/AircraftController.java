@@ -17,13 +17,13 @@ public class AircraftController {
     }
 
     @GetMapping("/aircraft/{id}")
-    public ResponseEntity<?> details(@PathVariable Long id){
+    public ResponseEntity<Aircraft> details(@PathVariable Long id){
         Optional<Aircraft> optionalAircraft = aircraftRepository.findById(id);
         if(optionalAircraft.isPresent()){
             Aircraft aircraft = optionalAircraft.get();
             return ResponseEntity.ok(aircraft);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("aircraft not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
     @PostMapping("/aircraft/add")

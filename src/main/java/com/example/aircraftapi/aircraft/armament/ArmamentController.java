@@ -15,13 +15,13 @@ public class ArmamentController {
         this.armamentRepository = armamentRepository;
     }
     @GetMapping("/armament/{id}")
-    public ResponseEntity<?> getOne(@PathVariable Long id){
+    public ResponseEntity<Armament> getOne(@PathVariable Long id){
         Optional<Armament> optionalArmament = armamentRepository.findById(id);
         if(optionalArmament.isPresent()){
             Armament armament = optionalArmament.get();
             return ResponseEntity.ok(armament);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("armament not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
     @PostMapping("/armament/add")
