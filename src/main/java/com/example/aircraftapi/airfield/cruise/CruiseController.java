@@ -9,57 +9,57 @@ import com.example.aircraftapi.airfield.AirfieldRepository;
 import com.example.aircraftapi.navigator.Navigator;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class CruiseController {
     private final AircraftRepository aircraftRepository;
     private final AirfieldRepository airfieldRepository;
     private final ArmamentRepository armamentRepository;
-    private final Navigator navigator;
 
     public CruiseController(AircraftRepository aircraftRepository, AirfieldRepository airfieldRepository, ArmamentRepository armamentRepository) {
         this.aircraftRepository = aircraftRepository;
         this.airfieldRepository = airfieldRepository;
         this.armamentRepository = armamentRepository;
-        this.navigator = new Navigator();
+
     }
 
     @GetMapping("/cruise")
-    public String cruise(@RequestBody Long aircraftId,
-                         @RequestBody Long startAirfield,
-                         @RequestBody Long finishAirfield,
-                         @RequestBody(required = false) Map<Long, Long> armamentMap) {
-        Aircraft aircraft = aircraftRepository.getReferenceById(aircraftId);
-        Double cruiseTime = 0.0;
+    public String cruise(@RequestBody CruiseRequest cruiseRequest) {
+        Long aircraftId = cruiseRequest.getAircraftId();
+        Long startAirfieldId = cruiseRequest.getStartAirfieldId();
+        Long finishAirfieldId = cruiseRequest.getFinishAirfieldId();
+
+        Aircraft aircraft = aircraftRepository.findById(aircraftId).get();
+        Airfield startAirfield = airfieldRepository.findById(startAirfieldId).get();
+        Airfield finishAirfield = airfieldRepository.findById(finishAirfieldId).get();
+        Map<Long, Long> armamentMap = cruiseRequest.getArmamentMap();
+
         List<Armament> armamentList = new ArrayList<>();
-        Iterator<Map.Entry<Long, Long>> iterator = armamentMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Armament armament = armamentRepository.getReferenceById(iterator.next().getKey());
-            armament.setQuantity(iterator.next().getValue());
-            cruiseTime += armament.getQuantity() * 0.25; //each armament takes 15 minutes to load on the aircraft
-            armamentList.add(armament);
-        }
-        Double armedWeight = 0.0;
-        for (Armament arm : armamentList) {
-            armedWeight += arm.getWeight() * arm.getQuantity();
-        }
-        if (armedWeight > aircraft.getMaxTakeoffWeight() - aircraft.getEmptyWeight()) { //ignoring fuel weight for simplicity of calculations
-            return "not possible: overloaded";
-        }
-        Double distance = navigator.calculateDistance(airfieldRepository.getReferenceById(startAirfield),
-                                                      airfieldRepository.getReferenceById(finishAirfield));
+        Double distance = Navigator.calculateDistance(startAirfield, finishAirfield);
+
         if(distance > aircraft.getMaxRange()){
             return "not possible: out of range";
+        } else {
+            Double armamentWeight = 0.0;
+            Double cruiseTime = 0.0;
+            for(Long key : armamentMap.keySet()){
+                Armament armament = armamentRepository.findById(key).get();
+                armament.setQuantity(armamentMap.get(key));
+                armamentWeight += armament.getWeight() * armament.getQuantity();
+                cruiseTime += 0.25; //assuming each armament (no matter its quantity) would take around 15 minutes to load
+                armamentList.add(armament);
+            }
+            if(armamentWeight > aircraft.getMaxTakeoffWeight() + armamentWeight){
+                return "not possible: overloaded";
+            } else {
+                Double travelTime = distance / aircraft.getCruiseSpeed();
+                cruiseTime += travelTime + 0.75; //additional 45 minutes for taxi, climbing, landing etc. This is not a precise calculation.
+                return "estimated cruise time: " + cruiseTime;
+            }
         }
-
-        cruiseTime += distance / aircraft.getCruiseSpeed() + 0.75; //45 minutes for climbing, accelerating, landing etc.
-        return "estimated time: " + cruiseTime;
-
     }
 }
