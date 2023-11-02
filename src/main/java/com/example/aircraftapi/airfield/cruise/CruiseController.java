@@ -6,11 +6,9 @@ import com.example.aircraftapi.aircraft.armament.Armament;
 import com.example.aircraftapi.aircraft.armament.ArmamentRepository;
 import com.example.aircraftapi.airfield.Airfield;
 import com.example.aircraftapi.airfield.AirfieldRepository;
+import com.example.aircraftapi.airfield.coordinates.Coordinates;
 import com.example.aircraftapi.navigator.Navigator;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -61,5 +59,13 @@ public class CruiseController {
                 return "estimated cruise time: " + cruiseTime;
             }
         }
+    }
+    @GetMapping("/waypoints/{id1}/{id2}/{interval}")
+    public List<Coordinates> waypoints(@PathVariable Long id1,
+                                       @PathVariable Long id2,
+                                       @PathVariable Double interval){
+        Airfield start = airfieldRepository.findById(id1).get();
+        Airfield finish = airfieldRepository.findById(id2).get();
+        return Navigator.getIntervals(start, finish, interval);
     }
 }

@@ -1,8 +1,11 @@
 package com.example.aircraftapi.navigator;
 
 import com.example.aircraftapi.airfield.Airfield;
-import com.example.aircraftapi.airfield.AirfieldRepository;
+import com.example.aircraftapi.airfield.coordinates.Coordinates;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static java.lang.Math.*;
@@ -40,5 +43,34 @@ public class Navigator {
         double distance = EARTH_RADIUS * c;
 
         return distance;
+    }
+
+    public static List<Coordinates> getIntervals(Airfield startingPoint,
+                                                  Airfield finishingPoint,
+                                                  Double segmentLength){
+        List<Coordinates> waypoints = new ArrayList<>();
+        Integer intervals = (int) Math.ceil(calculateDistance(startingPoint, finishingPoint) / segmentLength); //the number of intervals must be an int, because it would not make sense to have for example 3.4 waypoints between starting and finishing point
+
+        Double startingLatitude = parseCoordinates(startingPoint.getLatitude());
+        Double startingLongitude = parseCoordinates(startingPoint.getLongitude());
+
+        Double finishingLatitude = parseCoordinates(finishingPoint.getLatitude());
+        Double finishingLongitude = parseCoordinates(finishingPoint.getLongitude());
+
+        for(int i = 0; i < intervals; i++){
+            Double fraction = (double) i / intervals;
+            Double latitudeValue = startingLatitude + fraction * (finishingLatitude - startingLatitude);
+            String latitudeDirection = (latitudeValue < 0) ? "S" : "N";
+
+            Double longitudeValue = startingLongitude + fraction * (finishingLongitude - startingLongitude);
+            String longitudeDirection = (longitudeValue < 0) ? "W" : "E";
+
+
+            waypoints.add(new Coordinates(String.format(Locale.ENGLISH, "%.8f%s", Math.abs(latitudeValue), latitudeDirection),
+                                          String.format(Locale.ENGLISH, "%.8f%s", Math.abs(longitudeValue), longitudeDirection)));
+        }
+        System.out.println(waypoints.size());
+        return waypoints;
+
     }
 }

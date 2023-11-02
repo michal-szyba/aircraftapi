@@ -1,5 +1,6 @@
 package com.example.aircraftapi.airfield;
 
+import com.example.aircraftapi.airfield.coordinates.Coordinates;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +22,7 @@ public class Airfield {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Pattern(regexp = "([-+]?\\d+\\.\\d+)([EW])")
+    @Pattern(regexp = "([-+]?\\d+\\.\\d+)([NSEW])")
     private String longitude;
     @Pattern(regexp = "([-+]?\\d+\\.\\d+)([NS])")
     private String latitude;
