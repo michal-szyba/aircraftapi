@@ -1,7 +1,7 @@
 package com.example.aircraftapi.navigator;
 
-import com.example.aircraftapi.airfield.Airfield;
-import com.example.aircraftapi.airfield.coordinates.Coordinates;
+import com.example.aircraftapi.location.airfield.Airfield;
+import com.example.aircraftapi.location.Location;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ public class Navigator {
     private static final double EARTH_RADIUS = 6371.0;
 
 
-    private static Double parseCoordinates(String coordinate){
+    public static Double parseCoordinates(String coordinate){
         Pattern pattern = Pattern.compile("([-+]?\\d+\\.\\d+)([NSEW])");
         Matcher matcher = pattern.matcher(coordinate);
         if (matcher.find()) {
@@ -45,10 +45,10 @@ public class Navigator {
         return distance;
     }
 
-    public static List<Coordinates> getIntervals(Airfield startingPoint,
-                                                  Airfield finishingPoint,
-                                                  Double segmentLength){
-        List<Coordinates> waypoints = new ArrayList<>();
+    public static List<Location> getIntervals(Airfield startingPoint,
+                                              Airfield finishingPoint,
+                                              Double segmentLength){
+        List<Location> waypoints = new ArrayList<>();
         Integer intervals = (int) Math.ceil(calculateDistance(startingPoint, finishingPoint) / segmentLength); //the number of intervals must be an int, because it would not make sense to have for example 3.4 waypoints between starting and finishing point
 
         Double startingLatitude = parseCoordinates(startingPoint.getLatitude());
@@ -65,8 +65,7 @@ public class Navigator {
             Double longitudeValue = startingLongitude + fraction * (finishingLongitude - startingLongitude);
             String longitudeDirection = (longitudeValue < 0) ? "W" : "E";
 
-
-            waypoints.add(new Coordinates(String.format(Locale.ENGLISH, "%.8f%s", Math.abs(latitudeValue), latitudeDirection),
+            waypoints.add(new Location(String.format(Locale.ENGLISH, "%.8f%s", Math.abs(latitudeValue), latitudeDirection),
                                           String.format(Locale.ENGLISH, "%.8f%s", Math.abs(longitudeValue), longitudeDirection)));
         }
         System.out.println(waypoints.size());

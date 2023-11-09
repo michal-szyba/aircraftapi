@@ -1,6 +1,6 @@
-package com.example.aircraftapi.airfield;
+package com.example.aircraftapi.location.airfield;
 
-import com.example.aircraftapi.airfield.coordinates.Coordinates;
+import com.example.aircraftapi.location.Location;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Airfield {
+public class Airfield extends Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

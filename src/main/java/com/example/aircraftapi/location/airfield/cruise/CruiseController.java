@@ -1,12 +1,12 @@
-package com.example.aircraftapi.airfield.cruise;
+package com.example.aircraftapi.location.airfield.cruise;
 
 import com.example.aircraftapi.aircraft.Aircraft;
 import com.example.aircraftapi.aircraft.AircraftRepository;
 import com.example.aircraftapi.aircraft.armament.Armament;
 import com.example.aircraftapi.aircraft.armament.ArmamentRepository;
-import com.example.aircraftapi.airfield.Airfield;
-import com.example.aircraftapi.airfield.AirfieldRepository;
-import com.example.aircraftapi.airfield.coordinates.Coordinates;
+import com.example.aircraftapi.location.airfield.Airfield;
+import com.example.aircraftapi.location.airfield.AirfieldRepository;
+import com.example.aircraftapi.location.Location;
 import com.example.aircraftapi.navigator.Navigator;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,11 +61,12 @@ public class CruiseController {
         }
     }
     @GetMapping("/waypoints/{id1}/{id2}/{interval}")
-    public List<Coordinates> waypoints(@PathVariable Long id1,
-                                       @PathVariable Long id2,
-                                       @PathVariable Double interval){
+    public List<Location> waypoints(@PathVariable Long id1,
+                                    @PathVariable Long id2,
+                                    @PathVariable Double interval){
         Airfield start = airfieldRepository.findById(id1).get();
         Airfield finish = airfieldRepository.findById(id2).get();
         return Navigator.getIntervals(start, finish, interval);
     }
+
 }

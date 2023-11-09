@@ -1,4 +1,4 @@
-package com.example.aircraftapi.airfield.cruise;
+package com.example.aircraftapi.location.airfield.cruise;
 
 
 

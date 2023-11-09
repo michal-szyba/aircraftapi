@@ -1,4 +1,4 @@
-package com.example.aircraftapi.airfield;
+package com.example.aircraftapi.location.airfield;
 
 import com.example.aircraftapi.navigator.Navigator;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.example.aircraftapi.airfield.coordinates;
+package com.example.aircraftapi.location;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
-public class Coordinates {
+public class Location {
     @JsonProperty("latitude")
     private String latitude;
     @JsonProperty("longitude")

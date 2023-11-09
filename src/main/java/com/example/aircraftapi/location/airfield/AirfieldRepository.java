@@ -1,4 +1,4 @@
-package com.example.aircraftapi.airfield;
+package com.example.aircraftapi.location.airfield;
 
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
