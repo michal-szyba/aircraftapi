@@ -13,7 +13,6 @@ import static java.lang.Math.*;
 public class Navigator {
     private static final double EARTH_RADIUS = 6371.0;
 
-
     public static Double parseCoordinates(String coordinate){
         Pattern pattern = Pattern.compile("([-+]?\\d+\\.\\d+)([NSEW])");
         Matcher matcher = pattern.matcher(coordinate);

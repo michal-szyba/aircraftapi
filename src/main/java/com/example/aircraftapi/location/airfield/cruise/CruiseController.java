@@ -8,8 +8,14 @@ import com.example.aircraftapi.location.airfield.Airfield;
 import com.example.aircraftapi.location.airfield.AirfieldRepository;
 import com.example.aircraftapi.location.Location;
 import com.example.aircraftapi.navigator.Navigator;
+import com.example.aircraftapi.weather.WeatherData;
+import com.example.aircraftapi.weather.WeatherService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.net.http.HttpResponse;
 import java.util.*;
 
 @RestController
@@ -17,16 +23,18 @@ public class CruiseController {
     private final AircraftRepository aircraftRepository;
     private final AirfieldRepository airfieldRepository;
     private final ArmamentRepository armamentRepository;
+    private final WeatherService weatherService;
 
-    public CruiseController(AircraftRepository aircraftRepository, AirfieldRepository airfieldRepository, ArmamentRepository armamentRepository) {
+    public CruiseController(AircraftRepository aircraftRepository, AirfieldRepository airfieldRepository, ArmamentRepository armamentRepository, WeatherService weatherService) {
         this.aircraftRepository = aircraftRepository;
         this.airfieldRepository = airfieldRepository;
         this.armamentRepository = armamentRepository;
 
+        this.weatherService = weatherService;
     }
 
     @GetMapping("/cruise")
-    public String cruise(@RequestBody CruiseRequest cruiseRequest) {
+    public ResponseEntity<?> cruise(@RequestBody CruiseRequest cruiseRequest) {
         Long aircraftId = cruiseRequest.getAircraftId();
         Long startAirfieldId = cruiseRequest.getStartAirfieldId();
         Long finishAirfieldId = cruiseRequest.getFinishAirfieldId();
@@ -40,23 +48,26 @@ public class CruiseController {
         Double distance = Navigator.calculateDistance(startAirfield, finishAirfield);
 
         if(distance > aircraft.getMaxRange()){
-            return "not possible: out of range";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not possible: out of range");
         } else {
             Double armamentWeight = 0.0;
-            Double cruiseTime = 0.0;
             for(Long key : armamentMap.keySet()){
                 Armament armament = armamentRepository.findById(key).get();
                 armament.setQuantity(armamentMap.get(key));
                 armamentWeight += armament.getWeight() * armament.getQuantity();
-                cruiseTime += 0.25; //assuming each armament (no matter its quantity) would take around 15 minutes to load
                 armamentList.add(armament);
             }
-            if(armamentWeight > aircraft.getMaxTakeoffWeight() + armamentWeight){
-                return "not possible: overloaded";
+            if(armamentWeight + aircraft.getEmptyWeight() > aircraft.getMaxTakeoffWeight()){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("not possible: overloaded");
             } else {
                 Double travelTime = distance / aircraft.getCruiseSpeed();
-                cruiseTime += travelTime + 0.75; //additional 45 minutes for taxi, climbing, landing etc. This is not a precise calculation.
-                return "estimated cruise time: " + cruiseTime;
+                List<Location> waypoints = Navigator.getIntervals(startAirfield, finishAirfield, 100.0);
+                Map<Location, WeatherData> weatherMap = new HashMap<>();
+                for(Location location : waypoints){
+                    weatherMap.put(location,weatherService.getWeatherData(location));
+                }
+                CruiseResponse response = new CruiseResponse(armamentList, aircraft, startAirfield, finishAirfield, travelTime, distance, weatherMap);
+                return ResponseEntity.ok(response);
             }
         }
     }
