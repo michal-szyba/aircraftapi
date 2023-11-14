@@ -67,7 +67,6 @@ public class Navigator {
             waypoints.add(new Location(String.format(Locale.ENGLISH, "%.8f%s", Math.abs(latitudeValue), latitudeDirection),
                                           String.format(Locale.ENGLISH, "%.8f%s", Math.abs(longitudeValue), longitudeDirection)));
         }
-        System.out.println(waypoints.size());
         return waypoints;
 
     }

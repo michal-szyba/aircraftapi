@@ -18,5 +18,4 @@ public class WeatherController {
     public WeatherData getCurrentWeather(@RequestBody Location location){
         return weatherService.getWeatherData(location);
     }
-
 }
