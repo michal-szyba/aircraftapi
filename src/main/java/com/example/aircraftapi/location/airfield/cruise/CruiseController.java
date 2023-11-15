@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.net.http.HttpResponse;
+
 import java.util.*;
 
 @RestController
@@ -66,7 +66,9 @@ public class CruiseController {
                 for(Location location : waypoints){
                     weatherMap.put(location,weatherService.getWeatherData(location));
                 }
-                CruiseResponse response = new CruiseResponse(armamentList, aircraft, startAirfield, finishAirfield, travelTime, distance, weatherMap);
+                CruiseResponse response = new CruiseResponse(armamentList, aircraft, startAirfield,
+                                                             finishAirfield, travelTime, distance, weatherMap,
+                                                             cruiseRequest.getStartTime(), cruiseRequest.getStartTime().plusMinutes((long) (travelTime * 60)));
                 return ResponseEntity.ok(response);
             }
         }

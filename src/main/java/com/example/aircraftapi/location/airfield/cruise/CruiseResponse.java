@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Getter
@@ -22,6 +23,8 @@ public class CruiseResponse {
     private Double distance;
     private Long cruiseSpeed;
     private Map<String,WeatherData> weatherMap;
+    private LocalDateTime startTime;
+    private LocalDateTime estimatedFinishTime;
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
@@ -47,7 +50,11 @@ public class CruiseResponse {
         private String name;
         private Long quantity;
     }
-    public CruiseResponse(List<Armament> armamentList, Aircraft aircraft, Airfield startAirfield, Airfield finishAirfield, Double time, Double distance, Map<Location, WeatherData> weatherMap){
+    public CruiseResponse(List<Armament> armamentList,
+                          Aircraft aircraft, Airfield startAirfield,
+                          Airfield finishAirfield, Double time,
+                          Double distance, Map<Location, WeatherData> weatherMap,
+                          LocalDateTime startTime, LocalDateTime estimatedFinishTime){
         this.aircraft = aircraftToDTO(aircraft, armamentList);
         this.startingAirfield = airfieldToDTO(startAirfield);
         this.finishingAirfield = airfieldToDTO(finishAirfield);
@@ -55,6 +62,8 @@ public class CruiseResponse {
         this.distance = distance;
         this.cruiseSpeed = aircraft.getCruiseSpeed();
         this.weatherMap = weatherDataParse(weatherMap);
+        this.startTime = startTime;
+        this.estimatedFinishTime = estimatedFinishTime;
     }
     private AircraftDTO aircraftToDTO(Aircraft aircraft, List<Armament> armamentList){
         AircraftDTO aircraftDTO = new AircraftDTO();
