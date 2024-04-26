@@ -44,7 +44,7 @@ public class CruiseService {
                 throw new BadCruiseRequestException("out of range");
             } else {
                 calculateArmamentWeight(cruiseRequest.getArmamentMap())
-                        .filter(armamentWeight -> armamentWeight > 0)
+                        .filter(armamentWeight -> armamentWeight <= aircraft.getMaxTakeoffWeight())
                         .orElseThrow(() -> new BadCruiseRequestException("aircraft overloaded"));
                 long time = (long) (distance / aircraft.getCruiseSpeed());
                 CruiseResponseSuccess responseSuccess = new CruiseResponseSuccess(
