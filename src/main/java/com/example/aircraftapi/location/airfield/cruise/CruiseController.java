@@ -22,18 +22,11 @@ import java.util.*;
 
 @RestController
 public class CruiseController {
-    private final AircraftRepository aircraftRepository;
     private final AirfieldRepository airfieldRepository;
-    private final ArmamentRepository armamentRepository;
-    private final WeatherService weatherService;
     private final CruiseService cruiseService;
 
-    public CruiseController(AircraftRepository aircraftRepository, AirfieldRepository airfieldRepository, ArmamentRepository armamentRepository, WeatherService weatherService, CruiseService cruiseService) {
-        this.aircraftRepository = aircraftRepository;
+    public CruiseController(AirfieldRepository airfieldRepository, CruiseService cruiseService) {
         this.airfieldRepository = airfieldRepository;
-        this.armamentRepository = armamentRepository;
-
-        this.weatherService = weatherService;
         this.cruiseService = cruiseService;
     }
 
@@ -42,12 +35,18 @@ public class CruiseController {
         return cruiseService.calculateCruise(cruiseRequest);
     }
     @GetMapping("/waypoints/{id1}/{id2}/{interval}")
-    public List<Location> waypoints(@PathVariable Long id1,
+    public ResponseEntity<?> waypoints(@PathVariable Long id1,
                                     @PathVariable Long id2,
                                     @PathVariable Double interval){
-        Airfield start = airfieldRepository.findById(id1).get();
-        Airfield finish = airfieldRepository.findById(id2).get();
-        return Navigator.getIntervals(start, finish, interval);
+        Optional<Airfield> startOptional = airfieldRepository.findById(id1);
+        Optional<Airfield> finishOptional = airfieldRepository.findById(id2);
+        if(startOptional.isEmpty() || finishOptional.isEmpty()){
+            return ResponseEntity.badRequest().body("one or both airfields do not exist");
+        } else {
+            Airfield start = startOptional.get();
+            Airfield finish = finishOptional.get();
+            return ResponseEntity.ok().body(Navigator.getIntervals(start, finish, interval));
+        }
     }
 
 }

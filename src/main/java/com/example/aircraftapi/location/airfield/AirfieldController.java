@@ -23,7 +23,7 @@ public class AirfieldController {
             Airfield airfield = optionalAirfield.get();
             return ResponseEntity.ok(airfield);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.notFound().build();
         }
     }
     @PostMapping("/airfield/add")

@@ -14,7 +14,6 @@ import com.example.aircraftapi.location.airfield.cruise.response.CruiseResponseS
 import com.example.aircraftapi.navigator.Navigator;
 import com.example.aircraftapi.weather.WeatherData;
 import com.example.aircraftapi.weather.WeatherService;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.example.aircraftapi.location.airfield.cruise.response.CruiseResponseSuccess.ArmamentDTO;
