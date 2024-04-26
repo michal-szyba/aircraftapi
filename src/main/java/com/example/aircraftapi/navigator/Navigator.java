@@ -2,6 +2,7 @@ package com.example.aircraftapi.navigator;
 
 import com.example.aircraftapi.location.airfield.Airfield;
 import com.example.aircraftapi.location.Location;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static java.lang.Math.*;
-
+@Service
 public class Navigator {
     private static final double EARTH_RADIUS = 6371.0;
 
@@ -28,7 +29,7 @@ public class Navigator {
         }
     }
     //Output of calculateDistance() is in kilometers, because the EARTH_RADIUS is in kilometers.
-    public static Double calculateDistance(Airfield startingPoint, Airfield finishingPoint){
+    public static Double calculateDistance(Location startingPoint, Location finishingPoint){
         double latitude1 = parseCoordinates(startingPoint.getLatitude());
         double longitude1 = parseCoordinates(startingPoint.getLongitude());
 
@@ -44,8 +45,8 @@ public class Navigator {
         return distance;
     }
 
-    public static List<Location> getIntervals(Airfield startingPoint,
-                                              Airfield finishingPoint,
+    public static List<Location> getIntervals(Location startingPoint,
+                                              Location finishingPoint,
                                               Double segmentLength){
         List<Location> waypoints = new ArrayList<>();
         Integer intervals = (int) Math.ceil(calculateDistance(startingPoint, finishingPoint) / segmentLength); //the number of intervals must be an int, because it would not make sense to have for example 3.4 waypoints between starting and finishing point

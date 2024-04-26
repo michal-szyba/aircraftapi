@@ -18,7 +18,7 @@ public class CruiseRequest {
     private Long aircraftId;
     private Long startAirfieldId;
     private Long finishAirfieldId;
-    private Map<Long, Long> armamentMap;
+    private Map<Long, Long> armamentMap; //first value is armament id, second value is quantity
     private LocalDateTime startTime;
 
 }

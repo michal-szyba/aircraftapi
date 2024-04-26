@@ -9,5 +9,4 @@ import java.util.Optional;
 @Transactional
 @Repository
 public interface ArmamentRepository extends JpaRepository<Armament, Long> {
-    Optional<Armament> findById(Long id);
 }

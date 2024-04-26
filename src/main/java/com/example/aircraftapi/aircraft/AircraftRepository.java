@@ -9,5 +9,5 @@ import java.util.Optional;
 @Transactional
 @Repository
 public interface AircraftRepository extends JpaRepository<Aircraft, Long> {
-    Optional<Aircraft> findById(Long id);
+
 }

@@ -1,5 +1,6 @@
 package com.example.aircraftapi.aircraft.armament;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,7 @@ public class Armament {
     @Enumerated(EnumType.STRING)
     private GuidanceEnum guidanceType;
     private Double weight;
-    @Transient
+    @JsonIgnore
     private Long quantity;
 
 

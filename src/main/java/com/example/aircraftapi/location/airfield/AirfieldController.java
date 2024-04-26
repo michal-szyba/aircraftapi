@@ -1,12 +1,13 @@
 package com.example.aircraftapi.location.airfield;
 
-import com.example.aircraftapi.navigator.Navigator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.aircraftapi.navigator.Navigator.calculateDistance;
 
 @RestController
 public class AirfieldController {
@@ -36,9 +37,16 @@ public class AirfieldController {
         return ResponseEntity.status(HttpStatus.CREATED).body(addedAirfields);
     }
     @GetMapping("/airfield/getdist/{id1}/{id2}")
-    public Double getDistance(@PathVariable Long id1, @PathVariable Long id2){
-        Airfield start = details(id1).getBody();
-        Airfield finish = details(id2).getBody();
-        return Navigator.calculateDistance(start, finish);
+    public ResponseEntity<String> getDistance(@PathVariable Long id1, @PathVariable Long id2){
+        Optional<Airfield> startOptional = airfieldRepository.findById(id1);
+        Optional<Airfield> finishOptional = airfieldRepository.findById(id2);
+        if(startOptional.isEmpty() || finishOptional.isEmpty()){
+            return ResponseEntity.badRequest().body("one or both airfields do not exist");
+        } else {
+            Airfield start = startOptional.get();
+            Airfield finish = finishOptional.get();
+            return ResponseEntity.ok(calculateDistance(start, finish).toString());
+        }
+
     }
 }
